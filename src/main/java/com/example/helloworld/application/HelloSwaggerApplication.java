@@ -56,7 +56,7 @@ public class HelloSwaggerApplication extends Application<HelloWorldConfiguration
         ClassReaders.setReader(new DefaultJaxrsApiReader());
         SwaggerConfig config = ConfigFactory.config();
         config.setApiVersion("0.0.1");
-        config.setBasePath(".." + environment.getApplicationContext().getContextPath());
+        config.setBasePath(environment.getApplicationContext().getContextPath());
     }
 
     private void configureCors(Environment environment) {
