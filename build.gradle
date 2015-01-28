@@ -1,15 +1,15 @@
-apply plugin: 'java'
+apply plugin: 'groovy'
 apply plugin: 'application'
 apply plugin: 'idea'
 
 // The main class of the application
-mainClassName = 'com.example.helloworld.application.HelloWorldApplication'
+mainClassName = 'com.example.helloworld.application.HelloSwaggerApplication'
 version = '0.0.1-SNAPSHOT'
 
 //noinspection GroovyUnusedAssignment
-sourceCompatibility = 1.8
+sourceCompatibility = 1.7
 //noinspection GroovyUnusedAssignment
-targetCompatibility = 1.8
+targetCompatibility = 1.7
 
 //create a single Jar with all dependencies
 task fatJar(type: Jar) {
@@ -34,5 +34,7 @@ repositories {
 
 dependencies {
     compile group: 'io.dropwizard', name: 'dropwizard-core', version: '0.7.1'
+    compile group: 'com.wordnik', name: 'swagger-jaxrs_2.11', version: '1.3.12'
+    compile group: 'org.eclipse.jetty', name: 'jetty-servlets', version: '8.1.10.v20130312'
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
