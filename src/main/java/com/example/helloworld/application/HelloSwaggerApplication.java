@@ -44,37 +44,28 @@ public class HelloSwaggerApplication extends Application<HelloWorldConfiguration
 
         environment.jersey().register(new HelloWorldResource(configuration.getTemplate(), configuration.getDefaultName()));
 
-        addSwaggerResources(environment);
+        configureCors(environment);
+        configureSwagger(environment);
     }
 
-    private void addSwaggerResources(Environment environment) {
+    void configureSwagger(Environment environment) {
         environment.jersey().register(new ApiListingResourceJSON());
-
-        environment.jersey().register(new ResourceListingProvider());
         environment.jersey().register(new ApiDeclarationProvider());
+        environment.jersey().register(new ResourceListingProvider());
         ScannerFactory.setScanner(new DefaultJaxrsScanner());
         ClassReaders.setReader(new DefaultJaxrsApiReader());
-
         SwaggerConfig config = ConfigFactory.config();
         config.setApiVersion("0.0.1");
-        config.setBasePath("http://localhost:8080");
+        config.setBasePath(".." + environment.getApplicationContext().getContextPath());
+    }
 
-        /*
-         * If not running SwagerUI and This service in same server instance then need to
-         * allow to add CORS support to allow cross source scripting.
-         *
-         * I tried sample from https://github.com/swagger-api/swagger-core/wiki/JavaDropwizard-Quickstart
-         * but it did not work.  This one did though:
-         * https://groups.google.com/forum/#!topic/dropwizard-user/SMabfRaShso
-         */
+    private void configureCors(Environment environment) {
         FilterRegistration.Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
         filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
-        filter.setInitParameter("allowedOrigins", "*");
-        filter.setInitParameter("allowedHeaders",
-                "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin");
-        filter.setInitParameter("allowedMethods",
-                "GET,PUT,POST,DELETE,OPTIONS");
-        filter.setInitParameter("preflightMaxAge", "5184000"); // 2 months
-        //filter.setInitParameter("allowCredentials", "true");
+        filter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,PUT,POST,DELETE,OPTIONS");
+        filter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
+        filter.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
+        filter.setInitParameter("allowedHeaders", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin");
+        filter.setInitParameter("allowCredentials", "true");
     }
 }
